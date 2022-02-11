@@ -1,0 +1,7 @@
+{
+  "name": "car-rent-ignite",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Felipe Silva <carlosfelipesilva.fs@gmail.com>",
+  "license": "MIT"
+}
