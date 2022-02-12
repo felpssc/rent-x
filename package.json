@@ -4,7 +4,12 @@
   "main": "index.js",
   "author": "Felipe Silva <carlosfelipesilva.fs@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "dev": "ts-node-dev --transpile-only --ignore-watch node_modules --respawn src/server.ts"
+  },
   "devDependencies": {
-    "git-commit-msg-linter": "^4.0.7"
+    "git-commit-msg-linter": "^4.0.7",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.5"
   }
 }
