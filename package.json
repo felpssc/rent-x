@@ -28,6 +28,7 @@
     "yarn": "^1.22.17"
   },
   "dependencies": {
+    "csv-parse": "^5.0.4",
     "express": "^4.17.2",
     "multer": "^1.4.4",
     "uuid": "^8.3.2"
