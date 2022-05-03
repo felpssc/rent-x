@@ -1,7 +1,7 @@
 import { ICreateCarDTO } from "@modules/cars/dtos/ICreateCarDTO";
 import { Car } from "@modules/cars/infra/typeorm/entities/Car";
 
-import { ICarsRepository } from "../ICarsRepository";
+import { ICarsRepository, IRequest } from "../ICarsRepository";
 
 class CarsRepositoryInMemory implements ICarsRepository {
   cars: Car[] = [];
@@ -36,6 +36,23 @@ class CarsRepositoryInMemory implements ICarsRepository {
     const car = this.cars.find((car) => car.license_plate === license_plate);
 
     return car;
+  }
+
+  async findAvailableCars({
+    name,
+    brand,
+    category_id,
+  }: IRequest): Promise<Car[]> {
+    let cars = this.cars.filter((car) => car.available);
+
+    if (name) cars = cars.filter((car) => car.name === name);
+
+    if (brand) cars = cars.filter((car) => car.brand === brand);
+
+    if (category_id)
+      cars = cars.filter((car) => car.category_id === category_id);
+
+    return cars;
   }
 }
 
