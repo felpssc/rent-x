@@ -18,6 +18,7 @@ interface ICarsRepository {
   }: ICreateCarDTO): Promise<Car>;
   findByLicensePlate(license_plate: string): Promise<Car | undefined>;
   findAvailableCars({ name, brand, category_id }: IRequest): Promise<Car[]>;
+  findById(id: string): Promise<Car | undefined>;
 }
 
 export { ICarsRepository, IRequest };
