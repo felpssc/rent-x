@@ -9,8 +9,6 @@ class CreateRentalController implements IController {
     const { id: user_id } = request.user;
     const { car_id, expected_return_date } = request.body;
 
-    console.log(user_id, car_id, expected_return_date);
-
     const createRentalUseCase = container.resolve(CreateRentalUseCase);
 
     const rental = await createRentalUseCase.execute({

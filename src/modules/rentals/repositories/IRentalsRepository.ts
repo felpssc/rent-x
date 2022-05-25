@@ -9,6 +9,8 @@ interface IRentalsRepository {
   }: ICreateRentalDTO): Promise<Rental>;
   findInProgressRentalByCarId(car_id: string): Promise<Rental | undefined>;
   findInProgressRentalByUserId(user_id: string): Promise<Rental | undefined>;
+  findById(id: string): Promise<Rental | undefined>;
+  devolution(rental: Rental): Promise<void>;
 }
 
 export { IRentalsRepository };
