@@ -11,6 +11,7 @@ interface IRentalsRepository {
   findInProgressRentalByUserId(user_id: string): Promise<Rental | undefined>;
   findById(id: string): Promise<Rental | undefined>;
   devolution(rental: Rental): Promise<void>;
+  findByUser(user_id: string): Promise<Rental[]>;
 }
 
 export { IRentalsRepository };

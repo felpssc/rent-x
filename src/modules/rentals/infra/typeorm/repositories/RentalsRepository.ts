@@ -59,6 +59,15 @@ class RentalsRepository implements IRentalsRepository {
   async devolution(rental: Rental): Promise<void> {
     await this.repository.save(rental);
   }
+
+  async findByUser(user_id: string): Promise<Rental[]> {
+    const rentals = await this.repository.find({
+      where: { user_id },
+      relations: ["car"],
+    });
+
+    return rentals;
+  }
 }
 
 export { RentalsRepository };
