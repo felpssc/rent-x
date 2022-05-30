@@ -48,7 +48,7 @@ describe("CreateCarUseCase", () => {
         brand: "VW",
         category_id: "5f3f8f8f-c9c9-4c4c-b8b8-8b8b8b8b8b8b",
       })
-    ).rejects.toBeInstanceOf(AppError);
+    ).rejects.toEqual(new AppError("Car already registered"));
   });
 
   it("Should be able to create a car with available true by default", async () => {

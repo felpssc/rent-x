@@ -27,9 +27,19 @@ describe("CreateRentalUseCase", () => {
   });
 
   it("Should be able to create a new rental", async () => {
+    const car = await carsRepositoryInMemory.create({
+      brand: "Fiat",
+      category_id: "1",
+      daily_rate: 100,
+      description: "Fiat",
+      fine_amount: 10,
+      license_plate: "ABC-1234",
+      name: "Fiat",
+    });
+
     const rental = await createRentalUseCase.execute({
       user_id: "user-id",
-      car_id: "car-id",
+      car_id: car.id,
       expected_return_date: currentDateAddOneDay,
     });
 
@@ -49,7 +59,7 @@ describe("CreateRentalUseCase", () => {
         car_id: "car-id",
         expected_return_date: currentDateAddOneDay,
       })
-    ).rejects.toBeInstanceOf(AppError);
+    ).rejects.toEqual(new AppError("The car is not available for rental"));
   });
 
   it("Should not be able to create a new rental with a user that has a rental in progress", async () => {
@@ -65,7 +75,9 @@ describe("CreateRentalUseCase", () => {
         car_id: "another-car-id",
         expected_return_date: currentDateAddOneDay,
       })
-    ).rejects.toBeInstanceOf(AppError);
+    ).rejects.toEqual(
+      new AppError("The user already has a rental in progress")
+    );
   });
 
   it("Should not be able to create a new rental with a rental duration less than 24 hours", async () => {
@@ -75,6 +87,6 @@ describe("CreateRentalUseCase", () => {
         car_id: "car-id",
         expected_return_date: new Date(),
       })
-    ).rejects.toBeInstanceOf(AppError);
+    ).rejects.toEqual(new AppError("The rental must be at least for 24 hours"));
   });
 });

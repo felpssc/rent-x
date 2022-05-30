@@ -52,6 +52,6 @@ describe("CreateCarSpecificationUseCase", () => {
         car_id: "1",
         specifications_id: ["1", "2"],
       });
-    }).rejects.toBeInstanceOf(AppError);
+    }).rejects.toEqual(new AppError("Car does not exists"));
   });
 });
