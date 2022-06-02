@@ -1,8 +1,11 @@
 import { compare } from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { sign } from "jsonwebtoken";
 import { inject, injectable } from "tsyringe";
 
+import auth from "@config/auth";
 import { IUsersRepository } from "@modules/accounts/repositories/IUsersRepository";
+import { IUsersTokenRepository } from "@modules/accounts/repositories/IUsersTokenRepository";
+import { IDateProvider } from "@shared/container/providers/DateProvider/IDateProvider";
 import { AppError } from "@shared/errors/AppError";
 
 interface IRequest {
@@ -16,16 +19,29 @@ interface IResponse {
     email: string;
   };
   token: string;
+  refresh_token: string;
 }
 
 @injectable()
 class AuthenticateUserUseCase {
   constructor(
     @inject("UsersRepository")
-    private usersRepository: IUsersRepository
+    private usersRepository: IUsersRepository,
+    @inject("UsersTokenRepository")
+    private usersTokenRepository: IUsersTokenRepository,
+    @inject("DayjsDateProvider")
+    private dateProvider: IDateProvider
   ) {}
 
   async execute({ email, password }: IRequest): Promise<IResponse> {
+    const {
+      secret_token,
+      expires_in_token,
+      secret_refresh_token,
+      expires_in_refresh_token,
+      expires_refresh_token_days,
+    } = auth;
+
     const user = await this.usersRepository.findByEmail(email);
 
     if (!user) {
@@ -38,9 +54,30 @@ class AuthenticateUserUseCase {
       throw new AppError("Email or password invalid", 401);
     }
 
-    const token = jwt.sign({}, "a04a42497fbe95ab2c02c8a2c0d6cbe6", {
+    const token = jwt.sign({}, secret_token, {
       subject: user.id,
-      expiresIn: "1d",
+      expiresIn: expires_in_token,
+    });
+
+    const refresh_token = sign(
+      {
+        email,
+      },
+      secret_refresh_token,
+      {
+        subject: user.id,
+        expiresIn: expires_in_refresh_token,
+      }
+    );
+
+    const refresh_token_expires_date = this.dateProvider.addDays(
+      expires_refresh_token_days
+    );
+
+    await this.usersTokenRepository.create({
+      user_id: user.id,
+      refresh_token,
+      expires_date: refresh_token_expires_date,
     });
 
     return {
@@ -49,6 +86,7 @@ class AuthenticateUserUseCase {
         email: user.email,
       },
       token,
+      refresh_token,
     };
   }
 }

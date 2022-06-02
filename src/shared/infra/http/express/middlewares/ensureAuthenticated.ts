@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-import { UsersRepository } from "../../../../../modules/accounts/infra/typeorm/repositories/UsersRepository";
+import auth from "@config/auth";
+import { UsersTokenRepository } from "@modules/accounts/infra/typeorm/repositories/UsersTokenRepository";
+
 import { AppError } from "../../../../errors/AppError";
 
 interface IPayload {
@@ -15,6 +17,8 @@ export async function ensureAuthenticated(
 ) {
   const authHeader = request.headers.authorization;
 
+  const userTokensRepository = new UsersTokenRepository();
+
   if (!authHeader) {
     throw new AppError("JWT token is missing", 401);
   }
@@ -24,19 +28,20 @@ export async function ensureAuthenticated(
   try {
     const { sub: user_id } = jwt.verify(
       token,
-      "a04a42497fbe95ab2c02c8a2c0d6cbe6"
+      auth.secret_refresh_token
     ) as IPayload;
 
-    const usersRepository = new UsersRepository();
-
-    const user = await usersRepository.findById(user_id);
+    const user = await userTokensRepository.findByUserIdAndRefreshToken(
+      user_id,
+      token
+    );
 
     if (!user) {
       throw new AppError("User does not exists", 401);
     }
 
     request.user = {
-      id: user.id,
+      id: user_id,
     };
 
     next();
