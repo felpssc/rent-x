@@ -48,7 +48,7 @@ describe("CreateCategoryController", () => {
         name: "teste",
         description: "teste",
       })
-      .set("Authorization", `Bearer ${responseToken.body.token}`);
+      .set("Authorization", `Bearer ${responseToken.body.refresh_token}`);
 
     expect(response.status).toBe(201);
   });
@@ -59,10 +59,13 @@ describe("CreateCategoryController", () => {
       password: "admin",
     });
 
-    await request(app).post("/api/categories").send({
-      name: "teste",
-      description: "teste",
-    });
+    await request(app)
+      .post("/api/categories")
+      .send({
+        name: "teste",
+        description: "teste",
+      })
+      .set("Authorization", `Bearer ${responseToken.body.refresh_token}`);
 
     const response = await request(app)
       .post("/api/categories")
@@ -70,7 +73,7 @@ describe("CreateCategoryController", () => {
         name: "teste",
         description: "teste",
       })
-      .set("Authorization", `Bearer ${responseToken.body.token}`);
+      .set("Authorization", `Bearer ${responseToken.body.refresh_token}`);
 
     expect(response.status).toBe(400);
   });
@@ -87,7 +90,7 @@ describe("CreateCategoryController", () => {
         name: "teste",
         description: "teste",
       })
-      .set("Authorization", `Bearer ${responseToken.body.token}`);
+      .set("Authorization", `Bearer ${responseToken.body.refresh_token}`);
 
     await request(app)
       .post("/api/categories")
@@ -95,11 +98,11 @@ describe("CreateCategoryController", () => {
         name: "teste2",
         description: "teste2",
       })
-      .set("Authorization", `Bearer ${responseToken.body.token}`);
+      .set("Authorization", `Bearer ${responseToken.body.refresh_token}`);
 
     const response = await request(app)
       .get("/api/categories")
-      .set("Authorization", `Bearer ${responseToken.body.token}`);
+      .set("Authorization", `Bearer ${responseToken.body.refresh_token}`);
 
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(2);
