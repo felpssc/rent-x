@@ -6,6 +6,11 @@ import { IUsersTokenRepository } from "@modules/accounts/repositories/IUsersToke
 import { DayjsDateProvider } from "@shared/container/providers/DateProvider/implementations/DayjsDateProvider";
 import { AppError } from "@shared/errors/AppError";
 
+interface ITokenResponse {
+  token: string;
+  refresh_token: string;
+}
+
 @injectable()
 class RefreshTokenUseCase {
   constructor(
@@ -15,7 +20,7 @@ class RefreshTokenUseCase {
     private dateProvider: DayjsDateProvider
   ) {}
 
-  async execute(token: string) {
+  async execute(token: string): Promise<ITokenResponse> {
     const { email, sub } = verify(token, auth.secret_refresh_token) as {
       email: string;
       sub: string;
@@ -50,7 +55,15 @@ class RefreshTokenUseCase {
       user_id,
     });
 
-    return refresh_token;
+    const newToken = sign({}, auth.secret_token, {
+      subject: user_id,
+      expiresIn: auth.expires_in_token,
+    });
+
+    return {
+      token: newToken,
+      refresh_token,
+    };
   }
 }
 
