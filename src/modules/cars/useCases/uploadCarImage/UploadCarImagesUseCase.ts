@@ -1,6 +1,7 @@
 import { inject, injectable } from "tsyringe";
 
 import { CarImagesRepository } from "@modules/cars/infra/typeorm/repositories/CarImagesRepository";
+import { IStorageProvider } from "@shared/container/providers/StorageProvider/IStorageProvider";
 
 interface IRequest {
   car_id: string;
@@ -11,7 +12,9 @@ interface IRequest {
 class UploadCarImagesUseCase {
   constructor(
     @inject("CarImagesRepository")
-    private carImagesRepository: CarImagesRepository
+    private carImagesRepository: CarImagesRepository,
+    @inject("StorageProvider")
+    private storageProvider: IStorageProvider
   ) {}
 
   async execute({ car_id, images_name }: IRequest) {
@@ -20,6 +23,8 @@ class UploadCarImagesUseCase {
         car_id,
         image_name,
       });
+
+      await this.storageProvider.saveFile(image_name, "cars");
     });
   }
 }
