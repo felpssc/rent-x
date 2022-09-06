@@ -18,6 +18,8 @@ services:
     volumes:
       - .:/usr/app
     network_mode: "host"
+    depends_on:
+      - database_rentx
 
 volumes:
   pgdata:
