@@ -39,9 +39,10 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd ~/app/rent-x 
-            docker-compose restart
-            sleep 2s
-            docker-compose ps -a
+            docker-compose down -v
+            sleep 5s
+            docker-compose build && docker-compose up -d
+            docker-compose ps -a > pipeline.log
             
             
             
