@@ -38,9 +38,9 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd app/rent-x |
-            docker-compose restart |
-            sleep 2s |
+            cd ~/app/rent-x 
+            docker-compose restart
+            sleep 2s
             docker-compose ps -a
             
             
