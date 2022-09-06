@@ -29,3 +29,19 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           source: "., !node_modules"
           target: "~/app/rent-x"
+          
+      - name: Restart App
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/app/rent-x |
+            docker-compose restart |
+            sleep 2s |
+            docker-compose ps -a
+            
+            
+            
